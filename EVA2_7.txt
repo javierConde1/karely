@@ -1,0 +1,774 @@
+
+
+
+
+| Field          | Type          | Null | Key | Default | Extra          |
++----------------+---------------+------+-----+---------+----------------+
+| OrderID        | int(11)       | NO   | PRI | null    | auto_increment |
+| CustomerID     | varchar(5)    | YES  | MUL | null    |                |
+| EmployeeID     | int(11)       | YES  | MUL | null    |                |
+| OrderDate      | datetime      | YES  | MUL | null    |                |
+| RequiredDate   | datetime      | YES  |     | null    |                |
+| ShippedDate    | datetime      | YES  | MUL | null    |                |
+| ShipVia        | int(11)       | YES  | MUL | null    |                |
+| Freight        | decimal(10,4) | YES  |     | 0.0000  |                |
+| ShipName       | varchar(40)   | YES  |     | null    |                |
+| ShipAddress    | varchar(60)   | YES  |     | null    |                |
+| ShipCity       | varchar(15)   | YES  |     | null    |                |
+| ShipRegion     | varchar(15)   | YES  |     | null    |                |
+| ShipPostalCode | varchar(10)   | YES  | MUL | null    |                |
+| ShipCountry    | varchar(15)   | YES  |     | null    |                |
++----------------+---------------+------+-----+---------+----------------+
+14 rows in set (0.03 sec)
+mysql-sql> desc products;
++-----------------+---------------+------+-----+---------+----------------+
+| Field           | Type          | Null | Key | Default | Extra          |
++-----------------+---------------+------+-----+---------+----------------+
+| ProductID       | int(11)       | NO   | PRI | null    | auto_increment |
+| ProductName     | varchar(40)   | NO   | MUL | null    |                |
+| SupplierID      | int(11)       | YES  | MUL | null    |                |
+| CategoryID      | int(11)       | YES  | MUL | null    |                |
+| QuantityPerUnit | varchar(20)   | YES  |     | null    |                |
+| UnitPrice       | decimal(10,4) | YES  |     | 0.0000  |                |
+| UnitsInStock    | smallint(2)   | YES  |     | 0       |                |
+| UnitsOnOrder    | smallint(2)   | YES  |     | 0       |                |
+| ReorderLevel    | smallint(2)   | YES  |     | 0       |                |
+| Discontinued    | bit(1)        | NO   |     | b'0'    |                |
++-----------------+---------------+------+-----+---------+----------------+
+10 rows in set (0.02 sec)
+mysql-sql> select c.contactname, a.orderid, d.productname, a.quantity, a.unitpri
+ce
+       ... from orderdetails A
+       ... inner join orders B on A.orderid = B.orderid
+       ... inner join products D on A.productid = D.productid
+       ... inner join customers C on C.customerid = B.customerid
+       ... limit 20;
++--------------+---------+-------------------------------+----------+-----------
++
+| contactname  | orderid | productname                   | quantity | unitprice
+|
++--------------+---------+-------------------------------+----------+-----------
++
+| Maria Anders |   10643 | Rssle Sauerkraut              |       15 |   45.6000
+|
+| Maria Anders |   10643 | Chartreuse verte              |       21 |   18.0000
+|
+| Maria Anders |   10643 | Spegesild                     |        2 |   12.0000
+|
+| Maria Anders |   10692 | Vegie-spread                  |       20 |   43.9000
+|
+| Maria Anders |   10702 | Aniseed Syrup                 |        6 |   10.0000
+|
+| Maria Anders |   10702 | Lakkalikri                    |       15 |   18.0000
+|
+| Maria Anders |   10835 | Raclette Courdavault          |       15 |   55.0000
+|
+| Maria Anders |   10835 | Original Frankfurter grne Soe |        2 |   13.0000
+|
+| Maria Anders |   10952 | Grandma's Boysenberry Spread  |       16 |   25.0000
+|
+| Maria Anders |   10952 | Rssle Sauerkraut              |        2 |   45.6000
+|
+| Maria Anders |   11011 | Escargots de Bourgogne        |       40 |   13.2500
+|
+| Maria Anders |   11011 | Flotemysost                   |       20 |   21.5000
+|
+| Ana Trujillo |   10308 | Gudbrandsdalsost              |        1 |   28.8000
+|
+| Ana Trujillo |   10308 | Outback Lager                 |        5 |   12.0000
+|
+| Ana Trujillo |   10625 | Tofu                          |        3 |   23.2500
+|
+| Ana Trujillo |   10625 | Singaporean Hokkien Fried Mee |        5 |   14.0000
+|
+| Ana Trujillo |   10625 | Camembert Pierrot             |       10 |   34.0000
+|
+| Ana Trujillo |   10759 | Mascarpone Fabioli            |       10 |   32.0000
+|
+| Ana Trujillo |   10926 | Queso Cabrales                |        2 |   21.0000
+|
+| Ana Trujillo |   10926 | Konbu                         |       10 |    6.0000
+|
++--------------+---------+-------------------------------+----------+-----------
++
+20 rows in set (0.06 sec)
+mysql-sql> select count(*) from orderdetails;
++----------+
+| count(*) |
++----------+
+|     2155 |
++----------+
+1 row in set (0.07 sec)
+mysql-sql> select A.contactname from customers A
+       ... inner join orders b on a.customerid = b.customers id  limit 10;
+ERROR: 1064 (42000): You have an error in your SQL syntax; check the manual that
+ corresponds to your MySQL server version for the right syntax to use near 'id
+limit 10' at line 2
+mysql-sql> select  distinct (a.contactname) from customers a
+       ... inner join orders b on a.customerid = b.customerid;
++-------------------------+
+| contactname             |
++-------------------------+
+| Maria Anders            |
+| Ana Trujillo            |
+| Antonio Moreno          |
+| Thomas Hardy            |
+| Christina Berglund      |
+| Hanna Moos              |
+| Frdrique Citeaux        |
+| Martn Sommer            |
+| Laurence Lebihan        |
+| Elizabeth Lincoln       |
+| Victoria Ashworth       |
+| Patricio Simpson        |
+| Francisco Chang         |
+| Yang Wang               |
+| Pedro Afonso            |
+| Elizabeth Brown         |
+| Sven Ottlieb            |
+| Janine Labrune          |
+| Ann Devon               |
+| Roland Mendel           |
+| Aria Cruz               |
+| Martine Ranc            |
+| Maria Larsson           |
+| Peter Franken           |
+| Carine Schmitt          |
+| Paolo Accorti           |
+| Lino Rodriguez          |
+| Eduardo Saavedra        |
+| Jos Pedro Freyre        |
+| Andr Fonseca            |
+| Howard Snyder           |
+| Manuel Pereira          |
+| Mario Pontes            |
+| Carlos Hernndez         |
+| Yoshi Latimer           |
+| Patricia McKenna        |
+| Helen Bennett           |
+| Philip Cramer           |
+| Daniel Tonini           |
+| Annette Roulet          |
+| Yoshi Tannamuri         |
+| John Steel              |
+| Renate Messner          |
+| Jaime Yorres            |
+| Carlos Gonzlez          |
+| Felipe Izquierdo        |
+| Fran Wilson             |
+| Giovanni Rovelli        |
+| Catherine Dewey         |
+| Jean Fresnire           |
+| Alexander Feuer         |
+| Simon Crowther          |
+| Yvonne Moncada          |
+| Rene Phillips           |
+| Henriette Pfalzheim     |
+| Guillermo Fernndez      |
+| Georg Pipps             |
+| Isabel de Castro        |
+| Bernardo Batista        |
+| Lcia Carvalho           |
+| Horst Kloss             |
+| Sergio Gutirrez         |
+| Paula Wilson            |
+| Maurizio Moroni         |
+| Janete Limeira          |
+| Michael Holz            |
+| Alejandra Camino        |
+| Jonas Bergulfsen        |
+| Jose Pavarotti          |
+| Hari Kumar              |
+| Jytte Petersen          |
+| Dominique Perrier       |
+| Art Braunschweiger      |
+| Pascale Cartrain        |
+| Liz Nixon               |
+| Liu Wong                |
+| Karin Josephs           |
+| Miguel Angel Paolino    |
+| Anabela Domingues       |
+| Helvetius Nagy          |
+| Palle Ibsen             |
+| Mary Saveley            |
+| Paul Henriot            |
+| Rita Mller              |
+| Pirkko Koskitalo        |
+| Paula Parente           |
+| Karl Jablonski          |
+| Matti Karttunen         |
+| Zbyszek Piestrzeniewicz |
++-------------------------+
+89 rows in set (0.04 sec)
+mysql-sql> select contactname from customers where customerid is (
+       ... select distinct (customerid) from orders);
+ERROR: 1064 (42000): You have an error in your SQL syntax; check the manual that
+ corresponds to your MySQL server version for the right syntax to use near '(
+select distinct (customerid) from orders)' at line 1
+mysql-sql> select contactname from customers where customerid in (
+       ... select distinct (customerid) from orders);
++-------------------------+
+| contactname             |
++-------------------------+
+| Maria Anders            |
+| Ana Trujillo            |
+| Antonio Moreno          |
+| Thomas Hardy            |
+| Christina Berglund      |
+| Hanna Moos              |
+| Frdrique Citeaux        |
+| Martn Sommer            |
+| Laurence Lebihan        |
+| Elizabeth Lincoln       |
+| Victoria Ashworth       |
+| Patricio Simpson        |
+| Francisco Chang         |
+| Yang Wang               |
+| Pedro Afonso            |
+| Elizabeth Brown         |
+| Sven Ottlieb            |
+| Janine Labrune          |
+| Ann Devon               |
+| Roland Mendel           |
+| Aria Cruz               |
+| Martine Ranc            |
+| Maria Larsson           |
+| Peter Franken           |
+| Carine Schmitt          |
+| Paolo Accorti           |
+| Lino Rodriguez          |
+| Eduardo Saavedra        |
+| Jos Pedro Freyre        |
+| Andr Fonseca            |
+| Howard Snyder           |
+| Manuel Pereira          |
+| Mario Pontes            |
+| Carlos Hernndez         |
+| Yoshi Latimer           |
+| Patricia McKenna        |
+| Helen Bennett           |
+| Philip Cramer           |
+| Daniel Tonini           |
+| Annette Roulet          |
+| Yoshi Tannamuri         |
+| John Steel              |
+| Renate Messner          |
+| Jaime Yorres            |
+| Carlos Gonzlez          |
+| Felipe Izquierdo        |
+| Fran Wilson             |
+| Giovanni Rovelli        |
+| Catherine Dewey         |
+| Jean Fresnire           |
+| Alexander Feuer         |
+| Simon Crowther          |
+| Yvonne Moncada          |
+| Rene Phillips           |
+| Henriette Pfalzheim     |
+| Guillermo Fernndez      |
+| Georg Pipps             |
+| Isabel de Castro        |
+| Bernardo Batista        |
+| Lcia Carvalho           |
+| Horst Kloss             |
+| Sergio Gutirrez         |
+| Paula Wilson            |
+| Maurizio Moroni         |
+| Janete Limeira          |
+| Michael Holz            |
+| Alejandra Camino        |
+| Jonas Bergulfsen        |
+| Jose Pavarotti          |
+| Hari Kumar              |
+| Jytte Petersen          |
+| Dominique Perrier       |
+| Art Braunschweiger      |
+| Pascale Cartrain        |
+| Liz Nixon               |
+| Liu Wong                |
+| Karin Josephs           |
+| Miguel Angel Paolino    |
+| Anabela Domingues       |
+| Helvetius Nagy          |
+| Palle Ibsen             |
+| Mary Saveley            |
+| Paul Henriot            |
+| Rita Mller              |
+| Pirkko Koskitalo        |
+| Paula Parente           |
+| Karl Jablonski          |
+| Matti Karttunen         |
+| Zbyszek Piestrzeniewicz |
++-------------------------+
+89 rows in set (0.03 sec)
+mysql-sql> select contactname from customers where customerid in (
+       ... select distinct (customerid) from orders);
++-------------------------+
+| contactname             |
++-------------------------+
+| Maria Anders            |
+| Ana Trujillo            |
+| Antonio Moreno          |
+| Thomas Hardy            |
+| Christina Berglund      |
+| Hanna Moos              |
+| Frdrique Citeaux        |
+| Martn Sommer            |
+| Laurence Lebihan        |
+| Elizabeth Lincoln       |
+| Victoria Ashworth       |
+| Patricio Simpson        |
+| Francisco Chang         |
+| Yang Wang               |
+| Pedro Afonso            |
+| Elizabeth Brown         |
+| Sven Ottlieb            |
+| Janine Labrune          |
+| Ann Devon               |
+| Roland Mendel           |
+| Aria Cruz               |
+| Martine Ranc            |
+| Maria Larsson           |
+| Peter Franken           |
+| Carine Schmitt          |
+| Paolo Accorti           |
+| Lino Rodriguez          |
+| Eduardo Saavedra        |
+| Jos Pedro Freyre        |
+| Andr Fonseca            |
+| Howard Snyder           |
+| Manuel Pereira          |
+| Mario Pontes            |
+| Carlos Hernndez         |
+| Yoshi Latimer           |
+| Patricia McKenna        |
+| Helen Bennett           |
+| Philip Cramer           |
+| Daniel Tonini           |
+| Annette Roulet          |
+| Yoshi Tannamuri         |
+| John Steel              |
+| Renate Messner          |
+| Jaime Yorres            |
+| Carlos Gonzlez          |
+| Felipe Izquierdo        |
+| Fran Wilson             |
+| Giovanni Rovelli        |
+| Catherine Dewey         |
+| Jean Fresnire           |
+| Alexander Feuer         |
+| Simon Crowther          |
+| Yvonne Moncada          |
+| Rene Phillips           |
+| Henriette Pfalzheim     |
+| Guillermo Fernndez      |
+| Georg Pipps             |
+| Isabel de Castro        |
+| Bernardo Batista        |
+| Lcia Carvalho           |
+| Horst Kloss             |
+| Sergio Gutirrez         |
+| Paula Wilson            |
+| Maurizio Moroni         |
+| Janete Limeira          |
+| Michael Holz            |
+| Alejandra Camino        |
+| Jonas Bergulfsen        |
+| Jose Pavarotti          |
+| Hari Kumar              |
+| Jytte Petersen          |
+| Dominique Perrier       |
+| Art Braunschweiger      |
+| Pascale Cartrain        |
+| Liz Nixon               |
+| Liu Wong                |
+| Karin Josephs           |
+| Miguel Angel Paolino    |
+| Anabela Domingues       |
+| Helvetius Nagy          |
+| Palle Ibsen             |
+| Mary Saveley            |
+| Paul Henriot            |
+| Rita Mller              |
+| Pirkko Koskitalo        |
+| Paula Parente           |
+| Karl Jablonski          |
+| Matti Karttunen         |
+| Zbyszek Piestrzeniewicz |
++-------------------------+
+89 rows in set (0.03 sec)
+mysql-sql> select B.contactname from orders A
+       ... right outer join customers B on a.customerid = b.customerid
+       ... where a.customerid is null;
++----------------+
+| contactname    |
++----------------+
+| Diego Roel     |
+| Marie Bertrand |
+| Val2           |
+| Valon Hoti     |
++----------------+
+4 rows in set (0.01 sec)
+mysql-sql> select contactname from customers where customerid not in(
+       ... select distinct (customerid) from orders);
++----------------+
+| contactname    |
++----------------+
+| Diego Roel     |
+| Marie Bertrand |
+| Val2           |
+| Valon Hoti     |
++----------------+
+4 rows in set (0.06 sec)
+mysql-sql> desc products;
++-----------------+---------------+------+-----+---------+----------------+
+| Field           | Type          | Null | Key | Default | Extra          |
++-----------------+---------------+------+-----+---------+----------------+
+| ProductID       | int(11)       | NO   | PRI | null    | auto_increment |
+| ProductName     | varchar(40)   | NO   | MUL | null    |                |
+| SupplierID      | int(11)       | YES  | MUL | null    |                |
+| CategoryID      | int(11)       | YES  | MUL | null    |                |
+| QuantityPerUnit | varchar(20)   | YES  |     | null    |                |
+| UnitPrice       | decimal(10,4) | YES  |     | 0.0000  |                |
+| UnitsInStock    | smallint(2)   | YES  |     | 0       |                |
+| UnitsOnOrder    | smallint(2)   | YES  |     | 0       |                |
+| ReorderLevel    | smallint(2)   | YES  |     | 0       |                |
+| Discontinued    | bit(1)        | NO   |     | b'0'    |                |
++-----------------+---------------+------+-----+---------+----------------+
+10 rows in set (0.01 sec)
+mysql-sql> desc orderdetails;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| OrderID   | int(11)       | NO   | PRI | null    |       |
+| ProductID | int(11)       | NO   | PRI | null    |       |
+| UnitPrice | decimal(10,4) | NO   |     | 0.0000  |       |
+| Quantity  | smallint(2)   | NO   |     | 1       |       |
+| Discount  | double(8,0)   | NO   |     | 0       |       |
++-----------+---------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+mysql-sql> select distinct(productname) from products a
+       ... inner join orderdetails b where a.productid = b.productid limit 10;
++------------------------------+
+| productname                  |
++------------------------------+
+| Alice Mutton                 |
+| Aniseed Syrup                |
+| Boston Crab Meat             |
+| Camembert Pierrot            |
+| Carnarvon Tigers             |
+| Chai                         |
+| Chang                        |
+| Chartreuse verte             |
+| Chef Anton's Cajun Seasoning |
+| Chef Anton's Gumbo Mix       |
++------------------------------+
+10 rows in set (0.03 sec)
+mysql-sql>
+
+
+:__
+___
+___
+
+
+| Fran Wilson             |
+| Giovanni Rovelli        |
+| Catherine Dewey         |
+| Jean Fresnire           |
+| Alexander Feuer         |
+| Simon Crowther          |
+| Yvonne Moncada          |
+| Rene Phillips           |
+| Henriette Pfalzheim     |
+| Guillermo Fernndez      |
+| Georg Pipps             |
+| Isabel de Castro        |
+| Bernardo Batista        |
+| Lcia Carvalho           |
+| Horst Kloss             |
+| Sergio Gutirrez         |
+| Paula Wilson            |
+| Maurizio Moroni         |
+| Janete Limeira          |
+| Michael Holz            |
+| Alejandra Camino        |
+| Jonas Bergulfsen        |
+| Jose Pavarotti          |
+| Hari Kumar              |
+| Jytte Petersen          |
+| Dominique Perrier       |
+| Art Braunschweiger      |
+| Pascale Cartrain        |
+| Liz Nixon               |
+| Liu Wong                |
+| Karin Josephs           |
+| Miguel Angel Paolino    |
+| Anabela Domingues       |
+| Helvetius Nagy          |
+| Palle Ibsen             |
+| Mary Saveley            |
+| Paul Henriot            |
+| Rita Mller              |
+| Pirkko Koskitalo        |
+| Paula Parente           |
+| Karl Jablonski          |
+| Matti Karttunen         |
+| Zbyszek Piestrzeniewicz |
++-------------------------+
+89 rows in set (0.04 sec)
+mysql-sql> select contactname from customers where customerid is (
+       ... select distinct (customerid) from orders);
+ERROR: 1064 (42000): You have an error in your SQL syntax; check the manual that
+ corresponds to your MySQL server version for the right syntax to use near '(
+select distinct (customerid) from orders)' at line 1
+mysql-sql> select contactname from customers where customerid in (
+       ... select distinct (customerid) from orders);
++-------------------------+
+| contactname             |
++-------------------------+
+| Maria Anders            |
+| Ana Trujillo            |
+| Antonio Moreno          |
+| Thomas Hardy            |
+| Christina Berglund      |
+| Hanna Moos              |
+| Frdrique Citeaux        |
+| Martn Sommer            |
+| Laurence Lebihan        |
+| Elizabeth Lincoln       |
+| Victoria Ashworth       |
+| Patricio Simpson        |
+| Francisco Chang         |
+| Yang Wang               |
+| Pedro Afonso            |
+| Elizabeth Brown         |
+| Sven Ottlieb            |
+| Janine Labrune          |
+| Ann Devon               |
+| Roland Mendel           |
+| Aria Cruz               |
+| Martine Ranc            |
+| Maria Larsson           |
+| Peter Franken           |
+| Carine Schmitt          |
+| Paolo Accorti           |
+| Lino Rodriguez          |
+| Eduardo Saavedra        |
+| Jos Pedro Freyre        |
+| Andr Fonseca            |
+| Howard Snyder           |
+| Manuel Pereira          |
+| Mario Pontes            |
+| Carlos Hernndez         |
+| Yoshi Latimer           |
+| Patricia McKenna        |
+| Helen Bennett           |
+| Philip Cramer           |
+| Daniel Tonini           |
+| Annette Roulet          |
+| Yoshi Tannamuri         |
+| John Steel              |
+| Renate Messner          |
+| Jaime Yorres            |
+| Carlos Gonzlez          |
+| Felipe Izquierdo        |
+| Fran Wilson             |
+| Giovanni Rovelli        |
+| Catherine Dewey         |
+| Jean Fresnire           |
+| Alexander Feuer         |
+| Simon Crowther          |
+| Yvonne Moncada          |
+| Rene Phillips           |
+| Henriette Pfalzheim     |
+| Guillermo Fernndez      |
+| Georg Pipps             |
+| Isabel de Castro        |
+| Bernardo Batista        |
+| Lcia Carvalho           |
+| Horst Kloss             |
+| Sergio Gutirrez         |
+| Paula Wilson            |
+| Maurizio Moroni         |
+| Janete Limeira          |
+| Michael Holz            |
+| Alejandra Camino        |
+| Jonas Bergulfsen        |
+| Jose Pavarotti          |
+| Hari Kumar              |
+| Jytte Petersen          |
+| Dominique Perrier       |
+| Art Braunschweiger      |
+| Pascale Cartrain        |
+| Liz Nixon               |
+| Liu Wong                |
+| Karin Josephs           |
+| Miguel Angel Paolino    |
+| Anabela Domingues       |
+| Helvetius Nagy          |
+| Palle Ibsen             |
+| Mary Saveley            |
+| Paul Henriot            |
+| Rita Mller              |
+| Pirkko Koskitalo        |
+| Paula Parente           |
+| Karl Jablonski          |
+| Matti Karttunen         |
+| Zbyszek Piestrzeniewicz |
++-------------------------+
+89 rows in set (0.03 sec)
+mysql-sql> select B.contactname from orders A
+       ... right outer join customers B on a.customerid = b.customerid
+       ... where a.customerid is null;
++----------------+
+| contactname    |
++----------------+
+| Diego Roel     |
+| Marie Bertrand |
+| Val2           |
+| Valon Hoti     |
++----------------+
+4 rows in set (0.01 sec)
+mysql-sql> select contactname from customers where customerid not in(
+       ... select distinct (customerid) from orders);
++----------------+
+| contactname    |
++----------------+
+| Diego Roel     |
+| Marie Bertrand |
+| Val2           |
+| Valon Hoti     |
++----------------+
+4 rows in set (0.06 sec)
+mysql-sql> desc products;
++-----------------+---------------+------+-----+---------+----------------+
+| Field           | Type          | Null | Key | Default | Extra          |
++-----------------+---------------+------+-----+---------+----------------+
+| ProductID       | int(11)       | NO   | PRI | null    | auto_increment |
+| ProductName     | varchar(40)   | NO   | MUL | null    |                |
+| SupplierID      | int(11)       | YES  | MUL | null    |                |
+| CategoryID      | int(11)       | YES  | MUL | null    |                |
+| QuantityPerUnit | varchar(20)   | YES  |     | null    |                |
+| UnitPrice       | decimal(10,4) | YES  |     | 0.0000  |                |
+| UnitsInStock    | smallint(2)   | YES  |     | 0       |                |
+| UnitsOnOrder    | smallint(2)   | YES  |     | 0       |                |
+| ReorderLevel    | smallint(2)   | YES  |     | 0       |                |
+| Discontinued    | bit(1)        | NO   |     | b'0'    |                |
++-----------------+---------------+------+-----+---------+----------------+
+10 rows in set (0.01 sec)
+mysql-sql> desc orderdetails;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| OrderID   | int(11)       | NO   | PRI | null    |       |
+| ProductID | int(11)       | NO   | PRI | null    |       |
+| UnitPrice | decimal(10,4) | NO   |     | 0.0000  |       |
+| Quantity  | smallint(2)   | NO   |     | 1       |       |
+| Discount  | double(8,0)   | NO   |     | 0       |       |
++-----------+---------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+mysql-sql> select productname from products where orderid not in(
+       ... select distinct (orderid) from orders);
+ERROR: 1054 (42S22): Unknown column 'orderid' in 'IN/ALL/ANY subquery'
+mysql-sql> select productname from products where productid not in(
+       ... select distinct (productid) from orders);
+Empty set (0.03 sec)
+mysql-sql> select distinct(productname) from products a
+       ... inner join orderdetails b where a.productid = b.productid limit 10;
++------------------------------+
+| productname                  |
++------------------------------+
+| Alice Mutton                 |
+| Aniseed Syrup                |
+| Boston Crab Meat             |
+| Camembert Pierrot            |
+| Carnarvon Tigers             |
+| Chai                         |
+| Chang                        |
+| Chartreuse verte             |
+| Chef Anton's Cajun Seasoning |
+| Chef Anton's Gumbo Mix       |
++------------------------------+
+10 rows in set (0.03 sec)
+mysql-sql> show tables;
++----------------------+
+| Tables_in_northwind  |
++----------------------+
+| categories           |
+| customercustomerdemo |
+| customerdemographics |
+| customers            |
+| employees            |
+| employeeterritories  |
+| orderdetails         |
+| orders               |
+| products             |
+| region               |
+| shippers             |
+| suppliers            |
+| territories          |
++----------------------+
+13 rows in set (0.04 sec)
+mysql-sql> desc customers;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| CustomerID   | varchar(5)  | NO   | PRI | null    |       |
+| CompanyName  | varchar(40) | NO   | MUL | null    |       |
+| ContactName  | varchar(30) | YES  |     | null    |       |
+| ContactTitle | varchar(30) | YES  |     | null    |       |
+| Address      | varchar(60) | YES  |     | null    |       |
+| City         | varchar(15) | YES  | MUL | null    |       |
+| Region       | varchar(15) | YES  | MUL | null    |       |
+| PostalCode   | varchar(10) | YES  | MUL | null    |       |
+| Country      | varchar(15) | YES  |     | null    |       |
+| Phone        | varchar(24) | YES  |     | null    |       |
+| Fax          | varchar(24) | YES  |     | null    |       |
++--------------+-------------+------+-----+---------+-------+
+11 rows in set (0.02 sec)
+mysql-sql> desc employees;
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| EmployeeID      | int(11)      | NO   | PRI | null    | auto_increment |
+| LastName        | varchar(20)  | NO   | MUL | null    |                |
+| FirstName       | varchar(10)  | NO   |     | null    |                |
+| Title           | varchar(30)  | YES  |     | null    |                |
+| TitleOfCourtesy | varchar(25)  | YES  |     | null    |                |
+| BirthDate       | datetime     | YES  |     | null    |                |
+| HireDate        | datetime     | YES  |     | null    |                |
+| Address         | varchar(60)  | YES  |     | null    |                |
+| City            | varchar(15)  | YES  |     | null    |                |
+| Region          | varchar(15)  | YES  |     | null    |                |
+| PostalCode      | varchar(10)  | YES  | MUL | null    |                |
+| Country         | varchar(15)  | YES  |     | null    |                |
+| HomePhone       | varchar(24)  | YES  |     | null    |                |
+| Extension       | varchar(4)   | YES  |     | null    |                |
+| Notes           | mediumtext   | NO   |     | null    |                |
+| ReportsTo       | int(11)      | YES  | MUL | null    |                |
+| PhotoPath       | varchar(255) | YES  |     | null    |                |
+| Salary          | float        | YES  |     | null    |                |
++-----------------+--------------+------+-----+---------+----------------+
+18 rows in set (0.19 sec)
+mysql-sql> desc orders;
++----------------+---------------+------+-----+---------+----------------+
+| Field          | Type          | Null | Key | Default | Extra          |
++----------------+---------------+------+-----+---------+----------------+
+| OrderID        | int(11)       | NO   | PRI | null    | auto_increment |
+| CustomerID     | varchar(5)    | YES  | MUL | null    |                |
+| EmployeeID     | int(11)       | YES  | MUL | null    |                |
+| OrderDate      | datetime      | YES  | MUL | null    |                |
+| RequiredDate   | datetime      | YES  |     | null    |                |
+| ShippedDate    | datetime      | YES  | MUL | null    |                |
+| ShipVia        | int(11)       | YES  | MUL | null    |                |
+| Freight        | decimal(10,4) | YES  |     | 0.0000  |                |
+| ShipName       | varchar(40)   | YES  |     | null    |                |
+| ShipAddress    | varchar(60)   | YES  |     | null    |                |
+| ShipCity       | varchar(15)   | YES  |     | null    |                |
+| ShipRegion     | varchar(15)   | YES  |     | null    |                |
+| ShipPostalCode | varchar(10)   | YES  | MUL | null    |                |
+| ShipCountry    | varchar(15)   | YES  |     | null    |                |
++----------------+---------------+------+-----+---------+----------------+
+14 rows in set (0.02 sec)
+mysql-sql> select

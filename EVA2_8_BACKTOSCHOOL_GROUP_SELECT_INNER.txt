@@ -1,0 +1,586 @@
+MySQL Shell 1.0.11
+
+Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+
+Currently in JavaScript mode. Use \sql to switch to SQL mode and execute queries
+.
+mysql-js> \sql
+Switching to SQL mode... Commands end with ;
+mysql-sql> \connect -c root@localhost
+Creating a Classic Session to 'root@localhost'
+Enter password:
+Your MySQL connection id is 1
+Server version: 5.5.8-log MySQL Community Server (GPL)
+No default schema selected; type \use <schema> to set one.
+mysql-sql> \use northwind
+Schema set to `northwind`.
+mysql-sql> show tables;
++----------------------+
+| Tables_in_northwind  |
++----------------------+
+| categories           |
+| customercustomerdemo |
+| customerdemographics |
+| customers            |
+| employees            |
+| employeeterritories  |
+| orderdetails         |
+| orders               |
+| products             |
+| region               |
+| shippers             |
+| suppliers            |
+| territories          |
++----------------------+
+13 rows in set (0.01 sec)
+mysql-sql> desc products;
++-----------------+---------------+------+-----+---------+----------------+
+| Field           | Type          | Null | Key | Default | Extra          |
++-----------------+---------------+------+-----+---------+----------------+
+| ProductID       | int(11)       | NO   | PRI | null    | auto_increment |
+| ProductName     | varchar(40)   | NO   | MUL | null    |                |
+| SupplierID      | int(11)       | YES  | MUL | null    |                |
+| CategoryID      | int(11)       | YES  | MUL | null    |                |
+| QuantityPerUnit | varchar(20)   | YES  |     | null    |                |
+| UnitPrice       | decimal(10,4) | YES  |     | 0.0000  |                |
+| UnitsInStock    | smallint(2)   | YES  |     | 0       |                |
+| UnitsOnOrder    | smallint(2)   | YES  |     | 0       |                |
+| ReorderLevel    | smallint(2)   | YES  |     | 0       |                |
+| Discontinued    | bit(1)        | NO   |     | b'0'    |                |
++-----------------+---------------+------+-----+---------+----------------+
+10 rows in set (0.97 sec)
+mysql-sql> desc orderdetails;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| OrderID   | int(11)       | NO   | PRI | null    |       |
+| ProductID | int(11)       | NO   | PRI | null    |       |
+| UnitPrice | decimal(10,4) | NO   |     | 0.0000  |       |
+| Quantity  | smallint(2)   | NO   |     | 1       |       |
+| Discount  | double(8,0)   | NO   |     | 0       |       |
++-----------+---------------+------+-----+---------+-------+
+5 rows in set (0.05 sec)
+mysql-sql> select A.productnamefrom products A
+       ... inner join orderdetails B on A.products = B.productid limit 10;
+ERROR: 1064 (42000): You have an error in your SQL syntax; check the manual that
+ corresponds to your MySQL server version for the right syntax to use near 'A
+inner join orderdetails B on A.products = B.productid limit 10' at line 1
+mysql-sql> select A.productname from products A
+       ... inner join orderdetails B on A.products = B.productid limit 10;
+ERROR: 1054 (42S22): Unknown column 'A.products' in 'on clause'
+mysql-sql> select A.productname from products A
+       ... inner join orderdetails B on A.products = B.productid limit 10;
+ERROR: 1054 (42S22): Unknown column 'A.products' in 'on clause'
+mysql-sql> select A.productname from products A
+       ... inner join orderdetails B on A.productid = B.productid limit 10;
++--------------+
+| productname  |
++--------------+
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
+| Alice Mutton |
++--------------+
+10 rows in set (0.03 sec)
+mysql-sql> select A.productname as productname from A.products
+       ... inner join (select distinct(productid) as productid from orderdetails
+) B on A.productid = B.productid;
+ERROR: 1146 (42S02): Table 'a.products' doesn't exist
+mysql-sql> select A.productname as productname from A.product
+       ... inner join (select distinct(productid) as productid from orderdetails
+) B on A.productid = B.productid;
+ERROR: 1146 (42S02): Table 'a.product' doesn't exist
+mysql-sql> select A.productname as productname from products A
+       ... inner join (select distinct(productid) as productid from orderdetails
+) B on A.productid = B.productid;
++----------------------------------+
+| productname                      |
++----------------------------------+
+| Chai                             |
+| Chang                            |
+| Aniseed Syrup                    |
+| Chef Anton's Cajun Seasoning     |
+| Chef Anton's Gumbo Mix           |
+| Grandma's Boysenberry Spread     |
+| Uncle Bob's Organic Dried Pears  |
+| Northwoods Cranberry Sauce       |
+| Mishi Kobe Niku                  |
+| Ikura                            |
+| Queso Cabrales                   |
+| Queso Manchego La Pastora        |
+| Konbu                            |
+| Tofu                             |
+| Genen Shouyu                     |
+| Pavlova                          |
+| Alice Mutton                     |
+| Carnarvon Tigers                 |
+| Teatime Chocolate Biscuits       |
+| Sir Rodney's Marmalade           |
+| Sir Rodney's Scones              |
+| Gustaf's Knckebrd                |
+| Tunnbrd                          |
+| Guaran Fantstica                 |
+| NuNuCa Nu-Nougat-Creme           |
+| Gumbr Gummibrchen                |
+| Schoggi Schokolade               |
+| Rssle Sauerkraut                 |
+| Thringer Rostbratwurst           |
+| Nord-Ost Matjeshering            |
+| Gorgonzola Telino                |
+| Mascarpone Fabioli               |
+| Geitost                          |
+| Sasquatch Ale                    |
+| Steeleye Stout                   |
+| Inlagd Sill                      |
+| Gravad lax                       |
+| Cte de Blaye                     |
+| Chartreuse verte                 |
+| Boston Crab Meat                 |
+| Jack's New England Clam Chowder  |
+| Singaporean Hokkien Fried Mee    |
+| Ipoh Coffee                      |
+| Gula Malacca                     |
+| Rogede sild                      |
+| Spegesild                        |
+| Zaanse koeken                    |
+| Chocolade                        |
+| Maxilaku                         |
+| Valkoinen suklaa                 |
+| Manjimup Dried Apples            |
+| Filo Mix                         |
+| Perth Pasties                    |
+| Tourtire                         |
+| Pt chinois                       |
+| Gnocchi di nonna Alice           |
+| Ravioli Angelo                   |
+| Escargots de Bourgogne           |
+| Raclette Courdavault             |
+| Camembert Pierrot                |
+| Sirop d'rable                    |
+| Tarte au sucre                   |
+| Vegie-spread                     |
+| Wimmers gute Semmelkndel         |
+| Louisiana Fiery Hot Pepper Sauce |
+| Louisiana Hot Spiced Okra        |
+| Laughing Lumberjack Lager        |
+| Scottish Longbreads              |
+| Gudbrandsdalsost                 |
+| Outback Lager                    |
+| Flotemysost                      |
+| Mozzarella di Giovanni           |
+| Rd Kaviar                        |
+| Longlife Tofu                    |
+| Rhnbru Klosterbier               |
+| Lakkalikri                       |
+| Original Frankfurter grne Soe    |
++----------------------------------+
+77 rows in set (0.05 sec)
+mysql-sql> select A.productname as productname from A.product
+       ... inner join (select distinct(productid) as productid from orderdetails
+) B on A.productid = B.productid;
+ERROR: 1146 (42S02): Table 'a.product' doesn't exist
+mysql-sql> select A.productname as productname from A.products
+       ... inner join (select(productid) as productid from orderdetails) B on A.
+productid = B.productid limit 10;
+ERROR: 1146 (42S02): Table 'a.products' doesn't exist
+mysql-sql> select A.productname as productname from products A
+       ... inner join (select(productid) as productid from orderdetails) B on A.
+productid = B.productid limit 10;
++-------------+
+| productname |
++-------------+
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
+| Chai        |
++-------------+
+10 rows in set (0.01 sec)
+mysql-sql> desc orders;
++----------------+---------------+------+-----+---------+----------------+
+| Field          | Type          | Null | Key | Default | Extra          |
++----------------+---------------+------+-----+---------+----------------+
+| OrderID        | int(11)       | NO   | PRI | null    | auto_increment |
+| CustomerID     | varchar(5)    | YES  | MUL | null    |                |
+| EmployeeID     | int(11)       | YES  | MUL | null    |                |
+| OrderDate      | datetime      | YES  | MUL | null    |                |
+| RequiredDate   | datetime      | YES  |     | null    |                |
+| ShippedDate    | datetime      | YES  | MUL | null    |                |
+| ShipVia        | int(11)       | YES  | MUL | null    |                |
+| Freight        | decimal(10,4) | YES  |     | 0.0000  |                |
+| ShipName       | varchar(40)   | YES  |     | null    |                |
+| ShipAddress    | varchar(60)   | YES  |     | null    |                |
+| ShipCity       | varchar(15)   | YES  |     | null    |                |
+| ShipRegion     | varchar(15)   | YES  |     | null    |                |
+| ShipPostalCode | varchar(10)   | YES  | MUL | null    |                |
+| ShipCountry    | varchar(15)   | YES  |     | null    |                |
++----------------+---------------+------+-----+---------+----------------+
+14 rows in set (0.09 sec)
+mysql-sql> desc orderdetails;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| OrderID   | int(11)       | NO   | PRI | null    |       |
+| ProductID | int(11)       | NO   | PRI | null    |       |
+| UnitPrice | decimal(10,4) | NO   |     | 0.0000  |       |
+| Quantity  | smallint(2)   | NO   |     | 1       |       |
+| Discount  | double(8,0)   | NO   |     | 0       |       |
++-----------+---------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+mysql-sql> select * from orders limit 1;
++---------+------------+------------+--------------------+--------------------+-
+-------------------+---------+---------+---------------------------+------------
+--------+----------+------------+----------------+-------------+
+| OrderID | CustomerID | EmployeeID | OrderDate          | RequiredDate       |
+ShippedDate        | ShipVia | Freight | ShipName                  | ShipAddress
+        | ShipCity | ShipRegion | ShipPostalCode | ShipCountry |
++---------+------------+------------+--------------------+--------------------+-
+-------------------+---------+---------+---------------------------+------------
+--------+----------+------------+----------------+-------------+
+|   10248 | VINET      |          5 | 1996-07-04 0:00:00 | 1996-00-00 0:00:00 |
+1996-07-16 0:00:00 |       3 | 32.3800 | Vins et alcools Chevalier | 59 rue de l
+-Abbaye | Reims    | null       | 51100          | France      |
++---------+------------+------------+--------------------+--------------------+-
+-------------------+---------+---------+---------------------------+------------
+--------+----------+------------+----------------+-------------+
+1 row in set (0.00 sec)
+mysql-sql> select * from orderdetails where orderid = 10248;
++---------+-----------+-----------+----------+----------+
+| OrderID | ProductID | UnitPrice | Quantity | Discount |
++---------+-----------+-----------+----------+----------+
+|   10248 |        11 |   14.0000 |       12 |        0 |
+|   10248 |        42 |    9.8000 |       10 |        0 |
+|   10248 |        72 |   34.8000 |        5 |        0 |
++---------+-----------+-----------+----------+----------+
+3 rows in set (0.02 sec)
+mysql-sql> select sum(quantity) from orderdetails where orderid = 10248;
++---------------+
+| sum(quantity) |
++---------------+
+|            27 |
++---------------+
+1 row in set (0.04 sec)
+mysql-sql>
+
+____________________________________________
+____________________________________________
+
+|   10781 |  1132.3500 |
+|   10782 |    12.5000 |
+|   10783 |  1442.5000 |
+|   10784 |  1650.0000 |
+|   10785 |   387.5000 |
+|   10786 |  1913.8500 |
+|   10787 |  2760.8000 |
+|   10788 |   770.0000 |
+|   10789 |  3687.0000 |
+|   10790 |   850.0000 |
+|   10791 |  1926.0600 |
+|   10792 |   399.8500 |
+|   10793 |   191.1000 |
+|   10794 |   393.4500 |
+|   10795 |  2499.2500 |
+|   10796 |  2878.0800 |
+|   10797 |   420.0000 |
+|   10798 |   446.6000 |
+|   10799 |  1585.0000 |
+|   10800 |  1632.1500 |
+|   10801 |  4035.8000 |
+|   10802 |  3923.7500 |
+|   10803 |  1255.8000 |
+|   10804 |  2290.4000 |
+|   10805 |  2775.0000 |
+|   10806 |   572.1000 |
+|   10807 |    18.4000 |
+|   10808 |  1660.0000 |
+|   10809 |   140.0000 |
+|   10810 |   187.0000 |
+|   10811 |   852.0000 |
+|   10812 |  1852.0000 |
+|   10813 |   648.0000 |
+|   10814 |  2070.0000 |
+|   10815 |    40.0000 |
+|   10816 |  8891.0000 |
+|   10817 | 11490.7000 |
+|   10818 |   833.0000 |
+|   10819 |   477.0000 |
+|   10820 |  1140.0000 |
+|   10821 |   678.0000 |
+|   10822 |   237.9000 |
+|   10823 |  3107.5000 |
+|   10824 |   250.8000 |
+|   10825 |  1030.7600 |
+|   10826 |   730.0000 |
+|   10827 |   843.0000 |
+|   10828 |   932.0000 |
+|   10829 |  1764.0000 |
+|   10830 |  1974.0000 |
+|   10831 |  2684.4000 |
+|   10832 |   568.9500 |
+|   10833 |  1007.7000 |
+|   10834 |  1508.1200 |
+|   10835 |   851.0000 |
+|   10836 |  4705.5000 |
+|   10837 |  1254.0000 |
+|   10838 |  2584.5000 |
+|   10839 |   919.5000 |
+|   10840 |   264.0000 |
+|   10841 |  4581.0000 |
+|   10842 |   975.0000 |
+|   10843 |   212.0000 |
+|   10844 |   735.0000 |
+|   10845 |  4059.0000 |
+|   10846 |  1112.0000 |
+|   10847 |  6164.9000 |
+|   10848 |   931.5000 |
+|   10849 |  1052.1400 |
+|   10850 |   740.0000 |
+|   10851 |  2740.0000 |
+|   10852 |  2984.0000 |
+|   10853 |   625.0000 |
+|   10854 |  3490.0000 |
+|   10855 |  2275.2500 |
+|   10856 |   660.0000 |
+|   10857 |  2630.9500 |
+|   10858 |   649.0000 |
+|   10859 |  1438.2500 |
+|   10860 |   519.0000 |
+|   10861 |  3523.4000 |
+|   10862 |   581.0000 |
+|   10863 |   519.0000 |
+|   10864 |   282.0000 |
+|   10865 | 17250.0000 |
+|   10866 |  1461.6000 |
+|   10867 |    98.4000 |
+|   10868 |  2004.6000 |
+|   10869 |  1630.0000 |
+|   10870 |   160.0000 |
+|   10871 |  2083.4000 |
+|   10872 |  2166.8000 |
+|   10873 |   336.8000 |
+|   10874 |   310.0000 |
+|   10875 |   729.5000 |
+|   10876 |   917.0000 |
+|   10877 |  2086.0000 |
+|   10878 |  1620.0000 |
+|   10879 |   611.3000 |
+|   10880 |  1875.0000 |
+|   10881 |   150.0000 |
+|   10882 |   988.4000 |
+|   10883 |    36.0000 |
+|   10884 |  1450.6000 |
+|   10885 |  1209.0000 |
+|   10886 |  3127.5000 |
+|   10887 |    70.0000 |
+|   10888 |   605.0000 |
+|   10889 | 11380.0000 |
+|   10890 |   860.1000 |
+|   10891 |   388.3500 |
+|   10892 |  2200.0000 |
+|   10893 |  5502.1100 |
+|   10894 |  2898.0000 |
+|   10895 |  6379.4000 |
+|   10896 |   750.5000 |
+|   10897 | 10835.2400 |
+|   10898 |    30.0000 |
+|   10899 |   144.0000 |
+|   10900 |    45.0000 |
+|   10901 |   934.5000 |
+|   10902 |  1015.8000 |
+|   10903 |   932.0500 |
+|   10904 |  1924.2500 |
+|   10905 |   360.0000 |
+|   10906 |   427.5000 |
+|   10907 |   108.5000 |
+|   10908 |   698.0000 |
+|   10909 |   670.0000 |
+|   10910 |   452.9000 |
+|   10911 |   858.0000 |
+|   10912 |  8267.4000 |
+|   10913 |   958.7500 |
+|   10914 |   537.5000 |
+|   10915 |   539.5000 |
+|   10916 |   686.7000 |
+|   10917 |   365.8900 |
+|   10918 |  1930.0000 |
+|   10919 |  1122.8000 |
+|   10920 |   390.0000 |
+|   10921 |  1936.0000 |
+|   10922 |   742.5000 |
+|   10923 |   936.0000 |
+|   10924 |  2034.5000 |
+|   10925 |   559.0000 |
+|   10926 |   514.4000 |
+|   10927 |   800.0000 |
+|   10928 |   137.5000 |
+|   10929 |  1174.7500 |
+|   10930 |  2455.0000 |
+|   10931 |   837.0000 |
+|   10932 |  1925.5000 |
+|   10933 |   920.6000 |
+|   10934 |   500.0000 |
+|   10935 |   700.0000 |
+|   10936 |   570.0000 |
+|   10937 |   644.8000 |
+|   10938 |  3642.5000 |
+|   10939 |   750.0000 |
+|   10940 |   360.0000 |
+|   10941 |  4769.0000 |
+|   10942 |   560.0000 |
+|   10943 |   711.0000 |
+|   10944 |  1139.1000 |
+|   10945 |   245.0000 |
+|   10946 |  1407.5000 |
+|   10947 |   220.0000 |
+|   10948 |  2362.2500 |
+|   10949 |  4422.0000 |
+|   10950 |   110.0000 |
+|   10951 |   482.9000 |
+|   10952 |   491.2000 |
+|   10953 |  4675.0000 |
+|   10954 |  1902.1000 |
+|   10955 |    93.0000 |
+|   10956 |   677.0000 |
+|   10957 |  1762.7000 |
+|   10958 |   781.0000 |
+|   10959 |   155.0000 |
+|   10960 |   276.6000 |
+|   10961 |  1122.0000 |
+|   10962 |  3584.0000 |
+|   10963 |    68.0000 |
+|   10964 |  2052.5000 |
+|   10965 |   848.0000 |
+|   10966 |  1255.6000 |
+|   10967 |   910.4000 |
+|   10968 |  1408.0000 |
+|   10969 |   108.0000 |
+|   10970 |   280.0000 |
+|   10971 |  1733.0600 |
+|   10972 |   251.5000 |
+|   10973 |   291.5500 |
+|   10974 |   439.0000 |
+|   10975 |   717.5000 |
+|   10976 |   912.0000 |
+|   10977 |  2233.0000 |
+|   10978 |  1500.7000 |
+|   10979 |  4813.5000 |
+|   10980 |   310.0000 |
+|   10981 | 15810.0000 |
+|   10982 |  1014.0000 |
+|   10983 |   796.5000 |
+|   10984 |  1809.7500 |
+|   10985 |  2248.2000 |
+|   10986 |  2220.0000 |
+|   10987 |  2772.0000 |
+|   10988 |  3772.0000 |
+|   10989 |  1353.6000 |
+|   10990 |  4931.0000 |
+|   10991 |  2870.0000 |
+|   10992 |    69.6000 |
+|   10993 |  6527.2500 |
+|   10994 |   990.0000 |
+|   10995 |  1196.0000 |
+|   10996 |   560.0000 |
+|   10997 |  1980.0000 |
+|   10998 |   686.0000 |
+|   10999 |  1261.0000 |
+|   11000 |  1075.0000 |
+|   11001 |  2769.0000 |
+|   11002 |  1902.0000 |
+|   11003 |   326.0000 |
+|   11004 |   295.3800 |
+|   11005 |   586.0000 |
+|   11006 |   391.5800 |
+|   11007 |  2633.9000 |
+|   11008 |  4903.5000 |
+|   11009 |   702.0000 |
+|   11010 |   645.0000 |
+|   11011 |   960.0000 |
+|   11012 |  2974.0000 |
+|   11013 |   361.0000 |
+|   11014 |   270.2000 |
+|   11015 |   622.3500 |
+|   11016 |   491.5000 |
+|   11017 |  6750.0000 |
+|   11018 |  1575.0000 |
+|   11019 |    76.0000 |
+|   11020 |   744.0000 |
+|   11021 |  6941.4900 |
+|   11022 |  1402.0000 |
+|   11023 |  1500.0000 |
+|   11024 |  1966.8100 |
+|   11025 |   300.0000 |
+|   11026 |  1030.0000 |
+|   11027 |  1170.3000 |
+|   11028 |  2160.0000 |
+|   11029 |  1286.8000 |
+|   11030 | 16321.9000 |
+|   11031 |  2393.5000 |
+|   11032 |  8902.5000 |
+|   11033 |  3592.0000 |
+|   11034 |   554.4000 |
+|   11035 |  1754.5000 |
+|   11036 |  1692.0000 |
+|   11037 |    60.0000 |
+|   11038 |   751.0000 |
+|   11039 |  3090.0000 |
+|   11040 |   200.0000 |
+|   11041 |  1887.0000 |
+|   11042 |   405.7500 |
+|   11043 |   210.0000 |
+|   11044 |   591.6000 |
+|   11045 |  1309.5000 |
+|   11046 |  1564.0000 |
+|   11047 |  1090.5000 |
+|   11048 |   525.0000 |
+|   11049 |   342.0000 |
+|   11050 |   900.0000 |
+|   11051 |    45.0000 |
+|   11052 |  1665.0000 |
+|   11053 |  3658.7500 |
+|   11054 |   305.0000 |
+|   11055 |  1727.5000 |
+|   11056 |  3740.0000 |
+|   11057 |    45.0000 |
+|   11058 |   858.0000 |
+|   11059 |  1838.0000 |
+|   11060 |   266.0000 |
+|   11061 |   510.0000 |
+|   11062 |   508.0000 |
+|   11063 |  1445.5000 |
+|   11064 |  4722.3000 |
+|   11065 |   252.5600 |
+|   11066 |   928.7500 |
+|   11067 |    86.8500 |
+|   11068 |  2384.8000 |
+|   11069 |   360.0000 |
+|   11070 |  1873.5000 |
+|   11071 |   510.0000 |
+|   11072 |  5218.0000 |
+|   11073 |   300.0000 |
+|   11074 |   244.3000 |
+|   11075 |   586.0000 |
+|   11076 |  1057.0000 |
+|   11077 |  1374.6000 |
++---------+------------+
+830 rows in set (0.06 sec)
+mysql-sql> 
+
+Para cada cliente calcular el total de ventas
