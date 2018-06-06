@@ -1,0 +1,248 @@
+MySQL Shell 1.0.11
+
+Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+
+Currently in JavaScript mode. Use \sql to switch to SQL mode and execute queries.
+mysql-js> \sql
+Switching to SQL mode... Commands end with ;
+mysql-sql> \connect -c root@localhost
+Creating a Classic Session to 'root@localhost'
+Enter password:
+Your MySQL connection id is 14
+Server version: 5.5.8-log MySQL Community Server (GPL)
+No default schema selected; type \use <schema> to set one.
+mysql-sql> \use northwind
+Schema set to `northwind`.
+mysql-sql> desc employees;
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| EmployeeID      | int(11)      | NO   | PRI | null    | auto_increment |
+| LastName        | varchar(20)  | NO   | MUL | null    |                |
+| FirstName       | varchar(10)  | NO   |     | null    |                |
+| Title           | varchar(30)  | YES  |     | null    |                |
+| TitleOfCourtesy | varchar(25)  | YES  |     | null    |                |
+| BirthDate       | datetime     | YES  |     | null    |                |
+| HireDate        | datetime     | YES  |     | null    |                |
+| Address         | varchar(60)  | YES  |     | null    |                |
+| City            | varchar(15)  | YES  |     | null    |                |
+| Region          | varchar(15)  | YES  |     | null    |                |
+| PostalCode      | varchar(10)  | YES  | MUL | null    |                |
+| Country         | varchar(15)  | YES  |     | null    |                |
+| HomePhone       | varchar(24)  | YES  |     | null    |                |
+| Extension       | varchar(4)   | YES  |     | null    |                |
+| Notes           | mediumtext   | NO   |     | null    |                |
+| ReportsTo       | int(11)      | YES  | MUL | null    |                |
+| PhotoPath       | varchar(255) | YES  |     | null    |                |
+| Salary          | float        | YES  |     | null    |                |
++-----------------+--------------+------+-----+---------+----------------+
+18 rows in set (0.02 sec)
+mysql-sql> select employeeid, fistname, lastname, birthdate from employees;
+ERROR: 1054 (42S22): Unknown column 'fistname' in 'field list'
+mysql-sql> select employeeid, firstname, lastname, birthdate from employees;
++------------+-----------+-----------+--------------------+
+| employeeid | firstname | lastname  | birthdate          |
++------------+-----------+-----------+--------------------+
+|          1 | Nancy     | Davolio   | 1948-12-00 8:00:00 |
+|          2 | Andrew    | Fuller    | 1952-02-19 0:00:00 |
+|          3 | Janet     | Leverling | 1963-00-00 0:00:00 |
+|          4 | Margaret  | Peacock   | 1937-00-00 0:00:00 |
+|          5 | Steven    | Buchanan  | 1955-03-04 0:00:00 |
+|          6 | Michael   | Suyama    | 1963-07-02 0:00:00 |
+|          7 | Robert    | King      | 1960-05-29 0:00:00 |
+|          8 | Laura     | Callahan  | 1958-01-00 9:00:00 |
+|          9 | Anne      | Dodsworth | 1966-01-27 0:00:00 |
++------------+-----------+-----------+--------------------+
+9 rows in set (0.03 sec)
+mysql-sql> create view lista_empleados(id, nombre, apellido, fecha_nac) as select employeeid, firstname, lastname, birthdate from employees;
+Query OK, 0 rows affected (0.05 sec)
+mysql-sql> select * from lista_empleados;
++----+----------+-----------+--------------------+
+| id | nombre   | apellido  | fecha_nac          |
++----+----------+-----------+--------------------+
+|  1 | Nancy    | Davolio   | 1948-12-00 8:00:00 |
+|  2 | Andrew   | Fuller    | 1952-02-19 0:00:00 |
+|  3 | Janet    | Leverling | 1963-00-00 0:00:00 |
+|  4 | Margaret | Peacock   | 1937-00-00 0:00:00 |
+|  5 | Steven   | Buchanan  | 1955-03-04 0:00:00 |
+|  6 | Michael  | Suyama    | 1963-07-02 0:00:00 |
+|  7 | Robert   | King      | 1960-05-29 0:00:00 |
+|  8 | Laura    | Callahan  | 1958-01-00 9:00:00 |
+|  9 | Anne     | Dodsworth | 1966-01-27 0:00:00 |
++----+----------+-----------+--------------------+
+9 rows in set (0.00 sec)
+mysql-sql> create view lista_empleadoa(id, nombre, apellido, fecha_nac) as select employeeid, firstname, lastname, birthdate from employees where firstname l
+ike 'A%';
+Query OK, 0 rows affected (0.03 sec)
+mysql-sql> select from lista_empleadoa;
+ERROR: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'f
+rom lista_empleadoa' at line 1
+mysql-sql> select * from lista_empleadoa;
++----+--------+-----------+--------------------+
+| id | nombre | apellido  | fecha_nac          |
++----+--------+-----------+--------------------+
+|  2 | Andrew | Fuller    | 1952-02-19 0:00:00 |
+|  9 | Anne   | Dodsworth | 1966-01-27 0:00:00 |
++----+--------+-----------+--------------------+
+2 rows in set (0.01 sec)
+mysql-sql> create view mi_rfc(rfc) as select obten_rfc("Karely","Aguilar","Arzate","1997-10-06");
+Query OK, 0 rows affected (0.07 sec)
+mysql-sql> select * from mi_rfc;
++---------------+
+| rfc           |
++---------------+
+| AGAK971006241 |
++---------------+
+1 row in set (0.14 sec)
+mysql-sql> select firstname, lastname, obten_rfc(firstname, lastname, '', birthdate) from employees;
++-----------+-----------+-----------------------------------------------+
+| firstname | lastname  | obten_rfc(firstname, lastname, '', birthdate) |
++-----------+-----------+-----------------------------------------------+
+| Nancy     | Davolio   | DAxN4812081                                   |
+| Andrew    | Fuller    | FUxA520219285                                 |
+| Janet     | Leverling | LExJ630830421                                 |
+| Margaret  | Peacock   | PExM370919248                                 |
+| Steven    | Buchanan  | BUxS550304981                                 |
+| Michael   | Suyama    | SUxM630702161                                 |
+| Robert    | King      | KIxR600529860                                 |
+| Laura     | Callahan  | CAxL580109820                                 |
+| Anne      | Dodsworth | DOxA660127519                                 |
++-----------+-----------+-----------------------------------------------+
+9 rows in set (0.01 sec)
+mysql-sql> create view rfc_gringos as select  firstname, lastname, obten_rfc(firstname, lastname, '', birthdate) from employees;
+Query OK, 0 rows affected (0.04 sec)
+mysql-sql> select * from rfc_gringos;
++-----------+-----------+-----------------------------------------------+
+| firstname | lastname  | obten_rfc(firstname, lastname, '', birthdate) |
++-----------+-----------+-----------------------------------------------+
+| Nancy     | Davolio   | DAxN481208136                                 |
+| Andrew    | Fuller    | FUxA520219125                                 |
+| Janet     | Leverling | LExJ630830217                                 |
+| Margaret  | Peacock   | PExM370919712                                 |
+| Steven    | Buchanan  | BUxS550304906                                 |
+| Michael   | Suyama    | SUxM630702396                                 |
+| Robert    | King      | KIxR600529264                                 |
+| Laura     | Callahan  | CAxL580109130                                 |
+| Anne      | Dodsworth | DOxA660127858                                 |
++-----------+-----------+-----------------------------------------------+
+9 rows in set (0.01 sec)
+mysql-sql> create view personas as
+       ... select firstname as nombre from employees
+       ... union
+       ... select contactname as nombre from customers;
+Query OK, 0 rows affected (0.01 sec)
+mysql-sql> select * from personas;
++-------------------------+
+| nombre                  |
++-------------------------+
+| Nancy                   |
+| Andrew                  |
+| Janet                   |
+| Margaret                |
+| Steven                  |
+| Michael                 |
+| Robert                  |
+| Laura                   |
+| Anne                    |
+| Maria Anders            |
+| Ana Trujillo            |
+| Antonio Moreno          |
+| Thomas Hardy            |
+| Christina Berglund      |
+| Hanna Moos              |
+| Frdrique Citeaux        |
+| Martn Sommer            |
+| Laurence Lebihan        |
+| Elizabeth Lincoln       |
+| Victoria Ashworth       |
+| Patricio Simpson        |
+| Francisco Chang         |
+| Yang Wang               |
+| Pedro Afonso            |
+| Elizabeth Brown         |
+| Sven Ottlieb            |
+| Janine Labrune          |
+| Ann Devon               |
+| Roland Mendel           |
+| Aria Cruz               |
+| Diego Roel              |
+| Martine Ranc            |
+| Maria Larsson           |
+| Peter Franken           |
+| Carine Schmitt          |
+| Paolo Accorti           |
+| Lino Rodriguez          |
+| Eduardo Saavedra        |
+| Jos Pedro Freyre        |
+| Andr Fonseca            |
+| Howard Snyder           |
+| Manuel Pereira          |
+| Mario Pontes            |
+| Carlos Hernndez         |
+| Yoshi Latimer           |
+| Patricia McKenna        |
+| Helen Bennett           |
+| Philip Cramer           |
+| Daniel Tonini           |
+| Annette Roulet          |
+| Yoshi Tannamuri         |
+| John Steel              |
+| Renate Messner          |
+| Jaime Yorres            |
+| Carlos Gonzlez          |
+| Felipe Izquierdo        |
+| Fran Wilson             |
+| Giovanni Rovelli        |
+| Catherine Dewey         |
+| Jean Fresnire           |
+| Alexander Feuer         |
+| Simon Crowther          |
+| Yvonne Moncada          |
+| Rene Phillips           |
+| Henriette Pfalzheim     |
+| Marie Bertrand          |
+| Guillermo Fernndez      |
+| Georg Pipps             |
+| Isabel de Castro        |
+| Bernardo Batista        |
+| Lcia Carvalho           |
+| Horst Kloss             |
+| Sergio Gutirrez         |
+| Paula Wilson            |
+| Maurizio Moroni         |
+| Janete Limeira          |
+| Michael Holz            |
+| Alejandra Camino        |
+| Jonas Bergulfsen        |
+| Jose Pavarotti          |
+| Hari Kumar              |
+| Jytte Petersen          |
+| Dominique Perrier       |
+| Art Braunschweiger      |
+| Pascale Cartrain        |
+| Liz Nixon               |
+| Liu Wong                |
+| Karin Josephs           |
+| Miguel Angel Paolino    |
+| Anabela Domingues       |
+| Helvetius Nagy          |
+| Palle Ibsen             |
+| Val2                    |
+| Valon Hoti              |
+| Mary Saveley            |
+| Paul Henriot            |
+| Rita Mller              |
+| Pirkko Koskitalo        |
+| Paula Parente           |
+| Karl Jablonski          |
+| Matti Karttunen         |
+| Zbyszek Piestrzeniewicz |
++-------------------------+
+102 rows in set (0.01 sec)
+mysql-sql>
